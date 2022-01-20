@@ -1,29 +1,32 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-
-axios.defaults.baseURL = 'https://pixabay.com/api/';
-const KEY = '24271792-2ae9c4be49492e469cc4e2f34';
-// const REQUEST_PARAMS =
-//   'image_type=photo&orientation=horizontal&safesearch=true';
+import fetchPictures from '../../services/';
 
 class ImageGalleryItem extends Component {
+  state = {
+    response: null,
+  };
+
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.searchQuery !== this.props.searchQuery) {
-      axios
-        .get(`https://pixabay.com/api/?key=${KEY}&q=${this.props.searchQuery}`)
-        .then(response => {
-          console.log(response);
-        });
+      fetchPictures(this.props.searchQuery).then(response =>
+        this.setState({ response }),
+      );
     }
   }
 
   render() {
-    return (
-      <li className="gallery-item">
-        item
-        <img src="" alt="" />
-      </li>
-    );
+    const { response } = this.state;
+
+    if (response) {
+      const pictures = response.data.hits;
+
+      return pictures.map(({ id, previewURL, tags }) => (
+        <li key={id} className="gallery-item">
+          <img src={previewURL} alt={tags} />
+        </li>
+      ));
+    }
+    return null;
   }
 }
 

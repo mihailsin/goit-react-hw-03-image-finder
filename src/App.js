@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import './App.css';
 
 import Searchbar from './components/Searchbar';
@@ -22,6 +24,7 @@ class App extends Component {
         <ImageGallery>
           <ImageGalleryItem searchQuery={query} />
         </ImageGallery>
+        <ToastContainer />
       </div>
     );
   }
