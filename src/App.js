@@ -5,7 +5,7 @@ import './App.css';
 
 import Searchbar from './components/Searchbar';
 import ImageGallery from './components/ImageGallery';
-import ImageGalleryItem from './components/ImageGalleryItem';
+import View from './components/View';
 
 class App extends Component {
   state = {
@@ -22,7 +22,7 @@ class App extends Component {
       <div className="App">
         <Searchbar onSubmit={this.handleQuery} />
         <ImageGallery>
-          <ImageGalleryItem searchQuery={query} />
+          <View searchQuery={query} />
         </ImageGallery>
         <ToastContainer />
       </div>

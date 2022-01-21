@@ -12,8 +12,9 @@ class Searchbar extends Component {
     const { inputValue } = this.state;
 
     e.preventDefault();
-    if (inputValue.trim() === '') toast.error('Please type spmething!');
+    if (inputValue.trim() === '') toast.error('Please type something!');
     this.props.onSubmit(inputValue);
+    this.setState({ inputValue: '' });
     e.currentTarget.reset();
   };
 
@@ -26,14 +27,14 @@ class Searchbar extends Component {
   render() {
     return (
       <header className={styles.searchbar}>
-        <form className="form" onSubmit={this.submitHandler}>
-          <button type="submit" className="button">
-            <span className="button-label">Search</span>
+        <form className={styles.searchForm} onSubmit={this.submitHandler}>
+          <button type="submit" className={styles.searchForm__button}>
+            <span className={styles.searchForm__buttonLabel}>Search</span>
           </button>
 
           <input
             onChange={this.inputHandler}
-            className="input"
+            className={styles.searchForm__input}
             type="text"
             autoComplete="off"
             autoFocus
