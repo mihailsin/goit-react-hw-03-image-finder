@@ -4,7 +4,6 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import './App.css';
 
 import Searchbar from './components/Searchbar';
-import ImageGallery from './components/ImageGallery';
 import View from './components/View';
 
 class App extends Component {
@@ -21,9 +20,7 @@ class App extends Component {
     return (
       <div className="App">
         <Searchbar onSubmit={this.handleQuery} />
-        <ImageGallery>
-          <View searchQuery={query} />
-        </ImageGallery>
+        <View searchQuery={query}></View>
         <ToastContainer />
       </div>
     );

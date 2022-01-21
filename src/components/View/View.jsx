@@ -1,12 +1,13 @@
 import React, { Component, Fragment } from 'react';
 import api from '../../services/';
+import ImageGallery from '../ImageGallery';
 import ImageGalleryItem from '../ImageGalleryItem';
 import Loader from '../Loader';
 import Button from '../Button';
 import { toast } from 'react-toastify';
 
-var Scroll = require('react-scroll');
-var scroll = Scroll.animateScroll;
+const Scroll = require('react-scroll');
+const scroll = Scroll.animateScroll;
 
 class View extends Component {
   state = {
@@ -41,6 +42,7 @@ class View extends Component {
       prevProps.searchQuery !== this.props.searchQuery &&
       this.props.searchQuery.trim() !== ''
     ) {
+      api.resetPage();
       this.setState({ status: 'pending' });
       try {
         const response = await api.fetchPictures(this.props.searchQuery);
@@ -71,11 +73,11 @@ class View extends Component {
       <Fragment>
         {status === 'pending' && <Loader />}
         {status === 'resolved' && (
-          <Fragment>
+          <ImageGallery>
             <ImageGalleryItem pictures={response} />
-            {difference !== 0 && <Button clickHandler={this.onClickHandler} />}
-          </Fragment>
+          </ImageGallery>
         )}
+        {difference !== 0 && <Button clickHandler={this.onClickHandler} />}
       </Fragment>
     );
   }
