@@ -1,14 +1,39 @@
 import React, { Component, Fragment } from 'react';
-import fetchPictures from '../../services/';
+import api from '../../services/';
 import ImageGalleryItem from '../ImageGalleryItem';
 import Loader from '../Loader';
 import Button from '../Button';
 import { toast } from 'react-toastify';
 
+var Scroll = require('react-scroll');
+var scroll = Scroll.animateScroll;
+
 class View extends Component {
   state = {
-    response: null,
+    response: [],
+    length: 0,
     status: 'idle',
+  };
+
+  onClickHandler = async () => {
+    this.setState({ status: 'pending' });
+    api.pageIncrement();
+
+    try {
+      const response = await api.fetchPictures(this.props.searchQuery);
+      const hits = response.data.hits;
+      this.setState(prevState => {
+        return {
+          response: [...prevState.response, ...hits],
+          status: 'resolved',
+        };
+      });
+      scroll.scrollToBottom();
+    } catch (error) {
+      this.setState({ status: 'rejected' });
+      console.log(error.message);
+      toast.error(`${error.message}`);
+    }
   };
 
   async componentDidUpdate(prevProps, prevState) {
@@ -16,15 +41,20 @@ class View extends Component {
       prevProps.searchQuery !== this.props.searchQuery &&
       this.props.searchQuery.trim() !== ''
     ) {
-      this.setState({ status: 'pending', response: null });
+      this.setState({ status: 'pending' });
       try {
-        const response = await fetchPictures(this.props.searchQuery);
-
-        if (response.data.hits.length === 0) {
+        const response = await api.fetchPictures(this.props.searchQuery);
+        const hits = response.data.hits;
+        const totalHits = response.data.totalHits;
+        if (hits.length === 0) {
           toast.error('Sorry! There are no pictures matching your query.');
         }
-
-        this.setState({ response, status: 'resolved' });
+        this.setState({
+          response: hits,
+          length: totalHits,
+          status: 'resolved',
+        });
+        scroll.scrollToBottom();
       } catch (error) {
         this.setState({ status: 'rejected' });
         console.log(error.message);
@@ -34,16 +64,16 @@ class View extends Component {
   }
 
   render() {
-    const { response } = this.state;
-    const { status } = this.state;
-
+    const { response, length, status } = this.state;
+    const difference = length - response.length;
+    console.log(difference);
     return (
       <Fragment>
         {status === 'pending' && <Loader />}
         {status === 'resolved' && (
           <Fragment>
-            <ImageGalleryItem obj={response} />
-            {response.data.hits.length > 12 && <Button />}
+            <ImageGalleryItem pictures={response} />
+            {difference !== 0 && <Button clickHandler={this.onClickHandler} />}
           </Fragment>
         )}
       </Fragment>
