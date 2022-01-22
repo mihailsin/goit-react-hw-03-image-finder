@@ -1,9 +1,11 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import api from '../../services/';
 import ImageGallery from '../ImageGallery';
 import ImageGalleryItem from '../ImageGalleryItem';
 import Loader from '../Loader';
 import Button from '../Button';
+import Modal from '../Modal';
+
 import { toast } from 'react-toastify';
 
 const Scroll = require('react-scroll');
@@ -14,27 +16,8 @@ class View extends Component {
     response: [],
     length: 0,
     status: 'idle',
-  };
-
-  onClickHandler = async () => {
-    this.setState({ status: 'pending' });
-    api.pageIncrement();
-
-    try {
-      const response = await api.fetchPictures(this.props.searchQuery);
-      const hits = response.data.hits;
-      this.setState(prevState => {
-        return {
-          response: [...prevState.response, ...hits],
-          status: 'resolved',
-        };
-      });
-      scroll.scrollToBottom();
-    } catch (error) {
-      this.setState({ status: 'rejected' });
-      console.log(error.message);
-      toast.error(`${error.message}`);
-    }
+    showModal: false,
+    largeImageUrl: null,
   };
 
   async componentDidUpdate(prevProps, prevState) {
@@ -56,7 +39,6 @@ class View extends Component {
           length: totalHits,
           status: 'resolved',
         });
-        scroll.scrollToBottom();
       } catch (error) {
         this.setState({ status: 'rejected' });
         console.log(error.message);
@@ -65,20 +47,60 @@ class View extends Component {
     }
   }
 
+  onButtonClickHandler = async () => {
+    this.setState({ status: 'pending' });
+    api.pageIncrement();
+    try {
+      const response = await api.fetchPictures(this.props.searchQuery);
+      const hits = response.data.hits;
+      this.setState(prevState => {
+        return {
+          response: [...prevState.response, ...hits],
+          status: 'resolved',
+        };
+      });
+      scroll.scrollToBottom();
+    } catch (error) {
+      this.setState({ status: 'rejected' });
+      console.log(error.message);
+      toast.error(`${error.message}`);
+    }
+  };
+
+  toggleModal = e => {
+    this.setState(prevState => {
+      return { showModal: !prevState.showModal };
+    });
+  };
+
+  getUrl = url => {
+    this.setState({ largeImageUrl: url });
+  };
+
   render() {
-    const { response, length, status } = this.state;
-    const difference = length - response.length;
-    console.log(difference);
+    const { response, length, status, showModal, largeImageUrl } = this.state;
+    const picturesLeft = length - response.length;
     return (
-      <Fragment>
+      <>
         {status === 'pending' && <Loader />}
         {status === 'resolved' && (
           <ImageGallery>
-            <ImageGalleryItem pictures={response} />
+            {response.length !== 0 && (
+              <ImageGalleryItem
+                onClickHandler={this.toggleModal}
+                pictures={response}
+                getId={this.getUrl}
+              />
+            )}
           </ImageGallery>
         )}
-        {difference !== 0 && <Button clickHandler={this.onClickHandler} />}
-      </Fragment>
+        {picturesLeft !== 0 && (
+          <Button onClickHandler={this.onButtonClickHandler} />
+        )}
+        {showModal && largeImageUrl && (
+          <Modal url={largeImageUrl} closeModal={this.toggleModal}></Modal>
+        )}
+      </>
     );
   }
 }

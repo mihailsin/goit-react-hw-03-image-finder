@@ -10,7 +10,6 @@ const api = {
     const response = await axios.get(
       `https://pixabay.com/api/?key=${KEY}&q=${searchQuery}&page=${this.page}&${REQUEST_PARAMS}`,
     );
-    console.log(response);
     return response;
   },
 
