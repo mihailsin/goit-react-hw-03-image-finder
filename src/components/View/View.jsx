@@ -87,14 +87,14 @@ class View extends Component {
           <ImageGallery>
             {response.length !== 0 && (
               <ImageGalleryItem
-                onClickHandler={this.toggleModal}
                 pictures={response}
-                getId={this.getUrl}
+                onClickHandler={this.toggleModal}
+                getPictureUrl={this.getUrl}
               />
             )}
           </ImageGallery>
         )}
-        {picturesLeft !== 0 && (
+        {picturesLeft !== 0 && status !== 'pending' && (
           <Button onClickHandler={this.onButtonClickHandler} />
         )}
         {showModal && largeImageUrl && (

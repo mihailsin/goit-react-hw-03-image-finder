@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './Button.module.css';
+import propTypes from 'prop-types';
 
 const Button = ({ onClickHandler }) => {
   return (
@@ -9,6 +10,10 @@ const Button = ({ onClickHandler }) => {
       </button>
     </div>
   );
+};
+
+Button.propTypes = {
+  onClickHandler: propTypes.func.isRequired,
 };
 
 export default Button;
