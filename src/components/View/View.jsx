@@ -46,7 +46,6 @@ class View extends Component {
   }
 
   onButtonClickHandler = async () => {
-    this.setState({ status: 'pending' });
     api.pageIncrement();
     try {
       const data = await api.fetchPictures(this.props.searchQuery);
