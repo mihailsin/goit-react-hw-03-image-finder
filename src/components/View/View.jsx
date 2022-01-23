@@ -25,18 +25,16 @@ class View extends Component {
       prevProps.searchQuery !== this.props.searchQuery &&
       this.props.searchQuery.trim() !== ''
     ) {
-      api.resetPage();
       this.setState({ status: 'pending' });
+      api.resetPage();
       try {
-        const response = await api.fetchPictures(this.props.searchQuery);
-        const hits = response.data.hits;
-        const totalHits = response.data.totalHits;
-        if (hits.length === 0) {
+        const data = await api.fetchPictures(this.props.searchQuery);
+        if (data.hits.length === 0) {
           toast.error('Sorry! There are no pictures matching your query.');
         }
         this.setState({
-          response: hits,
-          length: totalHits,
+          response: data.hits,
+          length: data.totalHits,
           status: 'resolved',
         });
       } catch (error) {
@@ -51,11 +49,10 @@ class View extends Component {
     this.setState({ status: 'pending' });
     api.pageIncrement();
     try {
-      const response = await api.fetchPictures(this.props.searchQuery);
-      const hits = response.data.hits;
+      const data = await api.fetchPictures(this.props.searchQuery);
       this.setState(prevState => {
         return {
-          response: [...prevState.response, ...hits],
+          response: [...prevState.response, ...data.hits],
           status: 'resolved',
         };
       });

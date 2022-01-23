@@ -7,10 +7,14 @@ const api = {
   page: 1,
 
   async fetchPictures(searchQuery) {
-    const response = await axios.get(
-      `https://pixabay.com/api/?key=${KEY}&q=${searchQuery}&page=${this.page}&${REQUEST_PARAMS}`,
-    );
-    return response;
+    const response = await axios({
+      method: 'get',
+      url: `?key=${KEY}&q=${searchQuery}&page=${this.page}&${REQUEST_PARAMS}`,
+    });
+    const hits = response.data.hits;
+    const totalHits = response.data.totalHits;
+    const data = { hits, totalHits };
+    return data;
   },
 
   pageIncrement() {
