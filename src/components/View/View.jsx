@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import api from '../../services/';
 import ImageGallery from '../ImageGallery';
-import ImageGalleryItem from '../ImageGalleryItem';
 import Loader from '../Loader';
 import Button from '../Button';
 import Modal from '../Modal';
@@ -79,16 +78,12 @@ class View extends Component {
     return (
       <>
         {status === 'pending' && <Loader />}
-        {status === 'resolved' && (
-          <ImageGallery>
-            {response.length !== 0 && (
-              <ImageGalleryItem
-                pictures={response}
-                onClickHandler={this.toggleModal}
-                getPictureUrl={this.getUrl}
-              />
-            )}
-          </ImageGallery>
+        {status === 'resolved' && response.length !== 0 && (
+          <ImageGallery
+            pictures={response}
+            onClickHandler={this.toggleModal}
+            getPictureUrl={this.getUrl}
+          />
         )}
         {picturesLeft !== 0 && status !== 'pending' && (
           <Button onClickHandler={this.onButtonClickHandler} />
